@@ -15,6 +15,46 @@ import hyperliquid_api as hl
 
 st.set_page_config(page_title="Hyperliquid Trading Dashboard", layout="wide")
 
+st.markdown("""<style>
+@media (max-width: 768px) {
+    /* Stack columns vertically on mobile */
+    [data-testid="stHorizontalBlock"] {
+        flex-wrap: wrap !important;
+    }
+    [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
+        width: 100% !important;
+        flex: 1 1 100% !important;
+        min-width: 100% !important;
+    }
+    /* Compact metrics */
+    [data-testid="stMetric"] {
+        padding: 0.3rem 0 !important;
+    }
+    /* Smaller title */
+    h1 { font-size: 1.4rem !important; }
+    h2, [data-testid="stSubheader"] { font-size: 1.1rem !important; }
+    /* Tighter padding */
+    .block-container { padding: 0.5rem 0.8rem !important; }
+    section[data-testid="stSidebar"] { min-width: 260px !important; }
+    /* Dataframes scroll horizontally */
+    [data-testid="stDataFrame"] { overflow-x: auto !important; }
+}
+/* 2-col grid for tablets (signal stack, trade plan) */
+@media (min-width: 481px) and (max-width: 768px) {
+    [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
+        flex: 1 1 48% !important;
+        min-width: 48% !important;
+    }
+}
+/* Phone portrait: always single column */
+@media (max-width: 480px) {
+    [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
+        flex: 1 1 100% !important;
+        min-width: 100% !important;
+    }
+}
+</style>""", unsafe_allow_html=True)
+
 DEFAULT_ASSETS = ["HYPE", "ASTER", "ZEC", "TAO"]
 DEFAULT_MACRO = ["^GSPC", "DX-Y.NYB", "GC=F"]  # S&P 500, DXY, Gold futures
 BOOK_DEPTH = 10
@@ -601,7 +641,7 @@ def hyperliquid_panel(assets: list[str]) -> None:
                     "Ask": [float(asks[i]["px"]) if i < len(asks) else None for i in range(n)],
                     "Ask size": [float(asks[i]["sz"]) if i < len(asks) else None for i in range(n)],
                 })
-                st.dataframe(df, hide_index=True, height=380, width="stretch")
+                st.dataframe(df, hide_index=True, height=280, width="stretch")
 
 
 def _macd_state(candles: list[dict]) -> dict | None:
@@ -889,7 +929,7 @@ def tradingview_panel(assets: list[str]) -> None:
     container_id = f"tv_{abs(hash((symbol, interval, theme)))}"
 
     html = f"""
-    <div class="tradingview-widget-container" style="height:{height}px;width:100%">
+    <div class="tradingview-widget-container" style="height:{height}px;max-height:80vh;width:100%">
       <div id="{container_id}" style="height:100%;width:100%"></div>
     </div>
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
