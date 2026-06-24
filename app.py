@@ -16,15 +16,29 @@ import hyperliquid_api as hl
 st.set_page_config(page_title="Hyperliquid Trading Dashboard", layout="wide")
 
 st.markdown("""<style>
+/* Prevent horizontal overflow on all screen sizes */
+html, body, [data-testid="stAppViewContainer"], [data-testid="stMain"],
+.main, .block-container {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+}
+/* Constrain all iframes and embedded content */
+iframe, [data-testid="stHtml"], [data-testid="stCustomComponentV1"] {
+    max-width: 100% !important;
+    overflow: hidden !important;
+}
+
 @media (max-width: 768px) {
     /* Stack columns vertically on mobile */
     [data-testid="stHorizontalBlock"] {
         flex-wrap: wrap !important;
+        gap: 0.25rem !important;
     }
     [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
         width: 100% !important;
         flex: 1 1 100% !important;
-        min-width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
     }
     /* Compact metrics */
     [data-testid="stMetric"] {
@@ -34,23 +48,37 @@ st.markdown("""<style>
     h1 { font-size: 1.4rem !important; }
     h2, [data-testid="stSubheader"] { font-size: 1.1rem !important; }
     /* Tighter padding */
-    .block-container { padding: 0.5rem 0.8rem !important; }
+    .block-container {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+        padding-top: 0.5rem !important;
+    }
     section[data-testid="stSidebar"] { min-width: 260px !important; }
-    /* Dataframes scroll horizontally */
-    [data-testid="stDataFrame"] { overflow-x: auto !important; }
+    /* Dataframes: scroll inside their container, not the page */
+    [data-testid="stDataFrame"] {
+        max-width: 100% !important;
+        overflow-x: auto !important;
+    }
+    [data-testid="stDataFrame"] > div {
+        max-width: 100% !important;
+    }
+    /* Tables */
+    table { display: block; overflow-x: auto; max-width: 100%; }
 }
-/* 2-col grid for tablets (signal stack, trade plan) */
+/* 2-col grid for tablets */
 @media (min-width: 481px) and (max-width: 768px) {
     [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
         flex: 1 1 48% !important;
-        min-width: 48% !important;
+        min-width: 0 !important;
+        max-width: 48% !important;
     }
 }
 /* Phone portrait: always single column */
 @media (max-width: 480px) {
     [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
         flex: 1 1 100% !important;
-        min-width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
     }
 }
 </style>""", unsafe_allow_html=True)
@@ -929,7 +957,7 @@ def tradingview_panel(assets: list[str]) -> None:
     container_id = f"tv_{abs(hash((symbol, interval, theme)))}"
 
     html = f"""
-    <div class="tradingview-widget-container" style="height:{height}px;max-height:80vh;width:100%">
+    <div class="tradingview-widget-container" style="height:{height}px;max-height:80vh;width:100%;max-width:100%;overflow:hidden;box-sizing:border-box">
       <div id="{container_id}" style="height:100%;width:100%"></div>
     </div>
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
