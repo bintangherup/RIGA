@@ -1,0 +1,11 @@
+{
+  "_comment": "X accounts to scrape on /scrape-x. Add/remove handles here (without the @). Lookback in hours.",
+  "handles": [
+    "dombaeth27",
+    "ryker_crypto"
+  ],
+  "lookback_hours": 24,
+  "include_retweets": true,
+  "include_replies": false,
+  "max_tweets_per_handle": 30
+}

@@ -1,0 +1,43 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+
+# Auto-generated temp files
+news_dump.json
+news_dump.json.tmp
+x_dump.json.tmp
+
+# news_summary.md and x_dump.json are tracked — they sync to Streamlit Cloud
+
+# Playwright browser profile (contains auth cookies — do NOT commit)
+browser_profile/
+
+# Tweet snapshots — regenerated on every /scrape-x run
+x_snapshots/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Local config / overrides
+*.local
+.env
+
+# Local-only analysis scripts and outputs
+build_comparison.py
+summary_comparison.docx
