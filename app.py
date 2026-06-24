@@ -1,7 +1,9 @@
 import json
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
+
+WIB = timezone(timedelta(hours=7))
 
 import pandas as pd
 import plotly.graph_objects as go
@@ -439,7 +441,7 @@ def _consolidation_chart(coin: str, candles: list[dict], score: float, lookback:
 def consolidation_scanner_panel() -> None:
     st.subheader("Consolidation scanner — 1h coiled setups")
     st.caption(
-        f"Updated {datetime.now(timezone.utc).strftime('%H:%M:%S UTC')} · refresh every 10min · "
+        f"Updated {datetime.now(WIB).strftime('%H:%M:%S WIB')} · refresh every 10min · "
         "composite of BB squeeze + tight range + centered position on 1h candles (168-bar lookback). "
         "Higher score = more consolidated."
     )
@@ -506,7 +508,7 @@ def consolidation_scanner_panel() -> None:
 def top_movers_panel() -> None:
     st.subheader("Top movers — Hyperliquid discovery")
     st.caption(
-        f"Updated {datetime.now(timezone.utc).strftime('%H:%M:%S UTC')} · refresh every 5s · "
+        f"Updated {datetime.now(WIB).strftime('%H:%M:%S WIB')} · refresh every 5s · "
         f"filtered to vol24h ≥ ${MOVERS_MIN_VOL_USD/1e6:.0f}M"
     )
 
@@ -544,7 +546,7 @@ def top_movers_panel() -> None:
 @st.fragment(run_every="3s")
 def hyperliquid_panel(assets: list[str]) -> None:
     st.subheader("Hyperliquid — live market")
-    st.caption(f"Updated {datetime.now(timezone.utc).strftime('%H:%M:%S UTC')} · refresh every 3s")
+    st.caption(f"Updated {datetime.now(WIB).strftime('%H:%M:%S WIB')} · refresh every 3s")
 
     # Top-line metrics — wrap to rows of 4
     chunks = [assets[i:i + 4] for i in range(0, len(assets), 4)]
@@ -896,7 +898,7 @@ def tradingview_panel(assets: list[str]) -> None:
         "autosize": true,
         "symbol": "{symbol}",
         "interval": "{interval}",
-        "timezone": "Etc/UTC",
+        "timezone": "Asia/Jakarta",
         "theme": "{theme}",
         "style": "1",
         "locale": "en",
@@ -961,7 +963,7 @@ def x_feed_panel() -> None:
 
     lookback = dump.get("lookback_hours", 24)
     st.caption(
-        f"Scraped {_format_age(age)} ({gen_at.strftime('%H:%M:%S UTC')}) · "
+        f"Scraped {_format_age(age)} ({gen_at.astimezone(WIB).strftime('%H:%M:%S WIB')}) · "
         f"last {lookback}h · run `/scrape-x` to refresh"
     )
 
@@ -1052,14 +1054,14 @@ def ai_summary_panel() -> None:
         return
     text, mtime = summary
     age = (datetime.now(timezone.utc) - mtime).total_seconds()
-    st.caption(f"Generated {_format_age(age)} ({mtime.strftime('%H:%M:%S UTC')})")
+    st.caption(f"Generated {_format_age(age)} ({mtime.astimezone(WIB).strftime('%H:%M:%S WIB')})")
     st.markdown(text)
 
 
 @st.fragment(run_every="60s")
 def yahoo_news_panel(assets: list[str], macro_tickers: list[str]) -> None:
     st.subheader("News headlines (Yahoo Finance)")
-    st.caption(f"Updated {datetime.now(timezone.utc).strftime('%H:%M:%S UTC')} · refresh every 60s")
+    st.caption(f"Updated {datetime.now(WIB).strftime('%H:%M:%S WIB')} · refresh every 60s")
 
     yahoo_tickers = [f"{a}-USD" for a in assets] + macro_tickers
     items_by_ticker: dict[str, list[dict]] = {}
